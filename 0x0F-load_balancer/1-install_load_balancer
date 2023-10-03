@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
-#Install and setup load balancer
-sudo apt-get -y update
+# Installs HAProxy with the following configurations:
+# - Enables management via the init script.
+# - Distributes requests using a round-robin algorithm.
+
 sudo apt-get install -y haproxy
-sudo sed -i "s/ENABLED=0/ENABLED=1/g" /etc/default/haproxy
-sudo sed -i '$ a\ \nfrontend http_front\n\t bind *:80\n\tmode http\n\tdefault_backend http_back\n\nbackend http_back\n\tbalance roundrobin\n\tserver 387099-web-01 54.87.205.155:80 check\n\tserver 387099-web-02 54.90.50.215:80 check' /etc/haproxy/haproxy.cfg
-sudo service haproxy start
+
+echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
+
+cat <<EOT | sudo tee -a /etc/haproxy/haproxy.cfg
+frontend mostafaattiya.tech
+    timeout client  30000
+    bind 0:80
+    default_backend mostafaattiya.tech_backend
+
+backend mostafaattiya.tech_backend
+    timeout connect  3000
+    timeout server  30000
+    balance roundrobin
+    server 387099-web-01 54.87.205.155:80 check
+    server 387099-web-02 54.90.50.215:80 check
+EOT
+
+sudo service haproxy restart
