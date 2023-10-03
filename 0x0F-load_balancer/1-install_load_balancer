@@ -21,7 +21,7 @@ backend web-servers
     mode http
     balance roundrobin
     server 387099-web-01 54.87.205.155:80 check
-    server 387099-web-02 54.90.50.215:443 check
+    server 387099-web-02 54.90.50.215:80 check
 EOT
 
 sudo service haproxy restart
