@@ -36,13 +36,19 @@ frontend http_front
     timeout client  30000
     bind *:80
     bind *:443 ssl crt /etc/letsencrypt/live/www.mostafaattiya.tech/fullchain.pem
-    mode http
-    default_backend web-servers
 
-backend web-servers
+    redirect scheme https if !{ ssl_fc }
+
+    acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+    use_backend letsencrypt-backend if letsencrypt-acl
+    default_backend http_back
+
+    backend letsencrypt-backend
+    server letsencrypt 127.0.0.1:443
+
+backend http_back
     timeout connect  3000
     timeout server  30000
-    mode http
     balance roundrobin
     server 387099-web-01 54.87.205.155:80 check
     server 387101-web-02 54.90.50.215:80 check
