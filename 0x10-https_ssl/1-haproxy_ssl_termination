@@ -35,7 +35,7 @@ defaults
 frontend http_front
     timeout client  30000
     bind *:80
-    bind *:443 ssl crt /etc/letsencrypt/archive/www.mostafaattiya.tech/fullchain1.pem
+    bind *:443 ssl crt /etc/letsencrypt/archive/www.mostafaattiya.tech/www.mostafaattiya.tech.pem
 
     redirect scheme https if !{ ssl_fc }
 
